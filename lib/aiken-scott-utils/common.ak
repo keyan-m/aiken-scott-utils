@@ -1,3 +1,16 @@
+//// Since every value in Aiken is data encoded, using tuples to pack multiple
+//// values adds extra overhead as they need to be wrapped in a `Constr 0` under
+//// the hood.
+////
+//// However if we use nested functions, we can pass multiple values as
+//// arguments of functions with higher arities.
+////
+//// Following datatypes are aliases representing the nested functions which
+//// use multiple values returned by the utility functions of this package.
+////
+//// In the context of validators, the polymorphic `result`s typically resolve
+//// to `Bool`.
+
 pub type Scott2<a, b, result> =
   fn(a, b) -> result
 

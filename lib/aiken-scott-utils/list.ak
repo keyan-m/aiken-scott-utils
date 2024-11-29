@@ -1,3 +1,45 @@
+//// Utility functions for traversing lists while collecting more than one
+//// values.
+////
+//// Sample code to see how you can use one of the fold functions with the
+//// backpassing syntax:
+//// ```aiken
+//// use aiken_scott_utils/list as scott_list
+////
+//// fn avg_of_sums_and_products(xs: List<Int>) -> Int {
+////   let
+////     sum,
+////     product,
+////   <-
+////     scott_list.foldr2(
+////       xs,
+////       0,
+////       1,
+////       fn(x, sum_so_far, prod_so_far, return) {
+////         return(sum_so_far + x, prod_so_far * x)
+////       },
+////     ) 
+////   (sum + product) / 2
+//// }
+//// ```
+////
+//// The same code without backpassing syntactic sugar:
+//// ```aiken
+//// use aiken_scott_utils/list as scott_list
+////
+//// fn avg_of_sums_and_products_desugared(xs: List<Int>) -> Int {
+////   scott_list.foldr2(
+////     xs,
+////     0,
+////     1,
+////     fn(x, sum_so_far, prod_so_far, return) {
+////       return(sum_so_far + x, prod_so_far * x)
+////     },
+////     fn(sum, product) { (sum + product) / 2 }
+////   ) 
+//// }
+//// ```
+
 use aiken_scott_utils/common.{Scott2, Scott3, Scott4, Scott5, Scott6}
 
 // --- FOLDS -------------------------------------------------------------------
