@@ -298,6 +298,81 @@ fn do_find2(
   }
 }
 
+fn do_find3(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  return: Scott3<Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+          <- do_find2(xs, b_so_far, c_so_far, predicate_b, predicate_c)
+          return(found_a, m_b, m_c)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+          <- do_find2(xs, a_so_far, c_so_far, predicate_a, predicate_c)
+          return(m_a, found_b, m_c)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+          <- do_find2(xs, a_so_far, b_so_far, predicate_a, predicate_b)
+          return(m_a, m_b, found_c)
+        }
+      when a_so_far is {
+        None ->
+          if predicate_a(x) {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if predicate_b(x) {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if predicate_c(x) {
+                        c_found_as(Some(x))
+                      } else {
+                        do_find3(
+                          xs,
+                          a_so_far,
+                          b_so_far,
+                          c_so_far,
+                          predicate_a,
+                          predicate_b,
+                          predicate_c,
+                          return,
+                        )
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
 pub fn find2(
   self: List<x>,
   predicate_a: fn(x) -> Bool,
@@ -305,4 +380,23 @@ pub fn find2(
   return: Scott2<Option<x>, Option<x>, result>,
 ) -> result {
   do_find2(self, None, None, predicate_a, predicate_b, return)
+}
+
+pub fn find3(
+  self: List<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  return: Scott3<Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  do_find3(
+    self,
+    None,
+    None,
+    None,
+    predicate_a,
+    predicate_b,
+    predicate_c,
+    return,
+  )
 }

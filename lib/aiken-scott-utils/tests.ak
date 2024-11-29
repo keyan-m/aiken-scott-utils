@@ -242,3 +242,60 @@ test find2_unordered() {
     Some(2) == m_b,
   }
 }
+
+test find3_ordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+  <-
+    scott_list.find3(
+      [0, 0, 0, 1, 2, 0, 2, 3, 0, 1, 0, 2, 0],
+      fn(x) { x == 1 },
+      fn(x) { x == 2 },
+      fn(x) { x == 3 },
+    )
+  and {
+    Some(1) == m_a,
+    Some(2) == m_b,
+    Some(3) == m_c,
+  }
+}
+
+test find3_unordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+  <-
+    scott_list.find3(
+      [0, 3, 0, 2, 0, 0, 2, 0, 0, 1, 0, 2, 0],
+      fn(x) { x == 1 },
+      fn(x) { x == 2 },
+      fn(x) { x == 3 },
+    )
+  and {
+    Some(1) == m_a,
+    Some(2) == m_b,
+    Some(3) == m_c,
+  }
+}
+
+test find3_unordered_2() {
+  let
+    m_a,
+    m_b,
+    m_c,
+  <-
+    scott_list.find3(
+      [0, 3, 0, 1, 0, 0, 2, 0, 0, 1, 0, 2, 0],
+      fn(x) { x == 1 },
+      fn(x) { x == 2 },
+      fn(x) { x == 3 },
+    )
+  and {
+    Some(1) == m_a,
+    Some(2) == m_b,
+    Some(3) == m_c,
+  }
+}
