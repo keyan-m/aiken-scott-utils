@@ -1,4 +1,4 @@
-# Aiken Utility Function with Scott Encoding
+# Aiken Utility Functions with Scott Encoding
 
 A set of utility functions that return multiple values in Scott encoding rather
 than tuples of 2 or higher.
