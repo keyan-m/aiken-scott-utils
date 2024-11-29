@@ -550,6 +550,425 @@ fn do_find4(
   }
 }
 
+fn do_find5(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  d_so_far: Option<x>,
+  e_so_far: Option<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  predicate_d: fn(x) -> Bool,
+  predicate_e: fn(x) -> Bool,
+  return: Scott5<Option<x>, Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+            m_d,
+            m_e,
+          <-
+            do_find4(
+              xs,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              predicate_b,
+              predicate_c,
+              predicate_d,
+              predicate_e,
+            )
+          return(found_a, m_b, m_c, m_d, m_e)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+            m_d,
+            m_e,
+          <-
+            do_find4(
+              xs,
+              a_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              predicate_a,
+              predicate_c,
+              predicate_d,
+              predicate_e,
+            )
+          return(m_a, found_b, m_c, m_d, m_e)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+            m_d,
+            m_e,
+          <-
+            do_find4(
+              xs,
+              a_so_far,
+              b_so_far,
+              d_so_far,
+              e_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_d,
+              predicate_e,
+            )
+          return(m_a, m_b, found_c, m_d, m_e)
+        }
+      let d_found_as =
+        fn(found_d) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_e,
+          <-
+            do_find4(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              e_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_c,
+              predicate_e,
+            )
+          return(m_a, m_b, m_c, found_d, m_e)
+        }
+      let e_found_as =
+        fn(found_e) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_d,
+          <-
+            do_find4(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_c,
+              predicate_d,
+            )
+          return(m_a, m_b, m_c, m_d, found_e)
+        }
+      when a_so_far is {
+        None ->
+          if predicate_a(x) {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if predicate_b(x) {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if predicate_c(x) {
+                        c_found_as(Some(x))
+                      } else {
+                        when d_so_far is {
+                          None ->
+                            if predicate_d(x) {
+                              d_found_as(Some(x))
+                            } else {
+                              when e_so_far is {
+                                None ->
+                                  if predicate_e(x) {
+                                    e_found_as(Some(x))
+                                  } else {
+                                    do_find5(
+                                      xs,
+                                      a_so_far,
+                                      b_so_far,
+                                      c_so_far,
+                                      d_so_far,
+                                      e_so_far,
+                                      predicate_a,
+                                      predicate_b,
+                                      predicate_c,
+                                      predicate_d,
+                                      predicate_e,
+                                      return,
+                                    )
+                                  }
+                                Some(_) -> e_found_as(e_so_far)
+                              }
+                            }
+                          Some(_) -> d_found_as(d_so_far)
+                        }
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
+fn do_find6(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  d_so_far: Option<x>,
+  e_so_far: Option<x>,
+  f_so_far: Option<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  predicate_d: fn(x) -> Bool,
+  predicate_e: fn(x) -> Bool,
+  predicate_f: fn(x) -> Bool,
+  return: Scott6<
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    result,
+  >,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far, f_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+            m_d,
+            m_e,
+            m_f,
+          <-
+            do_find5(
+              xs,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              f_so_far,
+              predicate_b,
+              predicate_c,
+              predicate_d,
+              predicate_e,
+              predicate_f,
+            )
+          return(found_a, m_b, m_c, m_d, m_e, m_f)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+            m_d,
+            m_e,
+            m_f,
+          <-
+            do_find5(
+              xs,
+              a_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              f_so_far,
+              predicate_a,
+              predicate_c,
+              predicate_d,
+              predicate_e,
+              predicate_f,
+            )
+          return(m_a, found_b, m_c, m_d, m_e, m_f)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+            m_d,
+            m_e,
+            m_f,
+          <-
+            do_find5(
+              xs,
+              a_so_far,
+              b_so_far,
+              d_so_far,
+              e_so_far,
+              f_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_d,
+              predicate_e,
+              predicate_f,
+            )
+          return(m_a, m_b, found_c, m_d, m_e, m_f)
+        }
+      let d_found_as =
+        fn(found_d) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_e,
+            m_f,
+          <-
+            do_find5(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              e_so_far,
+              f_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_c,
+              predicate_e,
+              predicate_f,
+            )
+          return(m_a, m_b, m_c, found_d, m_e, m_f)
+        }
+      let e_found_as =
+        fn(found_e) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_d,
+            m_f,
+          <-
+            do_find5(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              f_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_c,
+              predicate_d,
+              predicate_f,
+            )
+          return(m_a, m_b, m_c, m_d, found_e, m_f)
+        }
+      let f_found_as =
+        fn(found_f) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_d,
+            m_e,
+          <-
+            do_find5(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_c,
+              predicate_d,
+              predicate_e,
+            )
+          return(m_a, m_b, m_c, m_d, m_e, found_f)
+        }
+      when a_so_far is {
+        None ->
+          if predicate_a(x) {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if predicate_b(x) {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if predicate_c(x) {
+                        c_found_as(Some(x))
+                      } else {
+                        when d_so_far is {
+                          None ->
+                            if predicate_d(x) {
+                              d_found_as(Some(x))
+                            } else {
+                              when e_so_far is {
+                                None ->
+                                  if predicate_e(x) {
+                                    e_found_as(Some(x))
+                                  } else {
+                                    when f_so_far is {
+                                      None ->
+                                        if predicate_f(x) {
+                                          f_found_as(Some(x))
+                                        } else {
+                                          do_find6(
+                                            xs,
+                                            a_so_far,
+                                            b_so_far,
+                                            c_so_far,
+                                            d_so_far,
+                                            e_so_far,
+                                            f_so_far,
+                                            predicate_a,
+                                            predicate_b,
+                                            predicate_c,
+                                            predicate_d,
+                                            predicate_e,
+                                            predicate_f,
+                                            return,
+                                          )
+                                        }
+                                      Some(_) -> f_found_as(f_so_far)
+                                    }
+                                  }
+                                Some(_) -> e_found_as(e_so_far)
+                              }
+                            }
+                          Some(_) -> d_found_as(d_so_far)
+                        }
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
 pub fn find2(
   self: List<x>,
   predicate_a: fn(x) -> Bool,
@@ -596,6 +1015,67 @@ pub fn find4(
     predicate_b,
     predicate_c,
     predicate_d,
+    return,
+  )
+}
+
+pub fn find5(
+  self: List<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  predicate_d: fn(x) -> Bool,
+  predicate_e: fn(x) -> Bool,
+  return: Scott5<Option<x>, Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  do_find5(
+    self,
+    None,
+    None,
+    None,
+    None,
+    None,
+    predicate_a,
+    predicate_b,
+    predicate_c,
+    predicate_d,
+    predicate_e,
+    return,
+  )
+}
+
+pub fn find6(
+  self: List<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  predicate_d: fn(x) -> Bool,
+  predicate_e: fn(x) -> Bool,
+  predicate_f: fn(x) -> Bool,
+  return: Scott6<
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    result,
+  >,
+) -> result {
+  do_find6(
+    self,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    predicate_a,
+    predicate_b,
+    predicate_c,
+    predicate_d,
+    predicate_e,
+    predicate_f,
     return,
   )
 }
