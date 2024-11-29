@@ -299,3 +299,69 @@ test find3_unordered_2() {
     Some(3) == m_c,
   }
 }
+
+test find4_ordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+  <-
+    scott_list.find4(
+      [0, 0, 0, 1, 2, 0, 2, 3, 0, 1, 0, 2, 0, 4],
+      fn(x) { x == 1 },
+      fn(x) { x == 2 },
+      fn(x) { x == 3 },
+      fn(x) { x == 4 },
+    )
+  and {
+    Some(1) == m_a,
+    Some(2) == m_b,
+    Some(3) == m_c,
+    Some(4) == m_d,
+  }
+}
+
+test find4_unordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+  <-
+    scott_list.find4(
+      [0, 4, 0, 0, 3, 0, 2, 0, 0, 2, 0, 0, 1, 0, 2, 0, 4],
+      fn(x) { x == 1 },
+      fn(x) { x == 2 },
+      fn(x) { x == 3 },
+      fn(x) { x == 4 },
+    )
+  and {
+    Some(1) == m_a,
+    Some(2) == m_b,
+    Some(3) == m_c,
+    Some(4) == m_d,
+  }
+}
+
+test find4_unordered_2() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+  <-
+    scott_list.find4(
+      [0, 3, 0, 1, 0, 4, 0, 2, 0, 0, 1, 0, 2, 0],
+      fn(x) { x == 1 },
+      fn(x) { x == 2 },
+      fn(x) { x == 3 },
+      fn(x) { x == 4 },
+    )
+  and {
+    Some(1) == m_a,
+    Some(2) == m_b,
+    Some(3) == m_c,
+    Some(4) == m_d,
+  }
+}

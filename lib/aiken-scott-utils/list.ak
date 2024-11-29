@@ -373,6 +373,141 @@ fn do_find3(
   }
 }
 
+fn do_find4(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  d_so_far: Option<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  predicate_d: fn(x) -> Bool,
+  return: Scott4<Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far, d_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+            m_d,
+          <-
+            do_find3(
+              xs,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              predicate_b,
+              predicate_c,
+              predicate_d,
+            )
+          return(found_a, m_b, m_c, m_d)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+            m_d,
+          <-
+            do_find3(
+              xs,
+              a_so_far,
+              c_so_far,
+              d_so_far,
+              predicate_a,
+              predicate_c,
+              predicate_d,
+            )
+          return(m_a, found_b, m_c, m_d)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+            m_d,
+          <-
+            do_find3(
+              xs,
+              a_so_far,
+              b_so_far,
+              d_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_d,
+            )
+          return(m_a, m_b, found_c, m_d)
+        }
+      let d_found_as =
+        fn(found_d) {
+          let
+            m_a,
+            m_b,
+            m_c,
+          <-
+            do_find3(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              predicate_a,
+              predicate_b,
+              predicate_c,
+            )
+          return(m_a, m_b, m_c, found_d)
+        }
+      when a_so_far is {
+        None ->
+          if predicate_a(x) {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if predicate_b(x) {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if predicate_c(x) {
+                        c_found_as(Some(x))
+                      } else {
+                        when d_so_far is {
+                          None ->
+                            if predicate_d(x) {
+                              d_found_as(Some(x))
+                            } else {
+                              do_find4(
+                                xs,
+                                a_so_far,
+                                b_so_far,
+                                c_so_far,
+                                d_so_far,
+                                predicate_a,
+                                predicate_b,
+                                predicate_c,
+                                predicate_d,
+                                return,
+                              )
+                            }
+                          Some(_) -> d_found_as(d_so_far)
+                        }
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
 pub fn find2(
   self: List<x>,
   predicate_a: fn(x) -> Bool,
@@ -397,6 +532,28 @@ pub fn find3(
     predicate_a,
     predicate_b,
     predicate_c,
+    return,
+  )
+}
+
+pub fn find4(
+  self: List<x>,
+  predicate_a: fn(x) -> Bool,
+  predicate_b: fn(x) -> Bool,
+  predicate_c: fn(x) -> Bool,
+  predicate_d: fn(x) -> Bool,
+  return: Scott4<Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  do_find4(
+    self,
+    None,
+    None,
+    None,
+    None,
+    predicate_a,
+    predicate_b,
+    predicate_c,
+    predicate_d,
     return,
   )
 }
