@@ -1,5 +1,5 @@
 //// Since every value in Aiken is data encoded, using tuples to pack multiple
-//// values adds extra overhead as they need to be constructed the hood.
+//// values adds extra overhead as they need to be constructed under the hood.
 ////
 //// However, if we use nested functions, we can pass multiple values as
 //// arguments of functions with higher arities.
