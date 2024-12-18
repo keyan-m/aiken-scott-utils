@@ -1,5 +1,5 @@
 name = "keyan-m/aiken-scott-utils"
-version = "0.0.0"
+version = "1.0.0"
 plutus = "v3"
 license = "Apache-2.0"
 description = "A set of utility functions that return multiple values in Scott encoding rather than tuples of 2 or higher"
