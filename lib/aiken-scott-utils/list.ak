@@ -40,6 +40,7 @@
 //// }
 //// ```
 
+use aiken/collection/list
 use aiken_scott_utils/common.{Scott2, Scott3, Scott4, Scott5, Scott6}
 
 // --- FOLDS -------------------------------------------------------------------
@@ -286,29 +287,14 @@ fn do_find2(
         None ->
           if predicate_a(x) {
             when b_so_far is {
-              None ->
-                do_find2(
-                  xs,
-                  Some(x),
-                  b_so_far,
-                  predicate_a,
-                  predicate_b,
-                  return,
-                )
+              None -> return(Some(x), list.find(xs, predicate_b))
               Some(_) -> return(Some(x), b_so_far)
             }
           } else {
             when b_so_far is {
               None ->
                 if predicate_b(x) {
-                  do_find2(
-                    xs,
-                    a_so_far,
-                    Some(x),
-                    predicate_a,
-                    predicate_b,
-                    return,
-                  )
+                  return(list.find(xs, predicate_a), Some(x))
                 } else {
                   do_find2(
                     xs,
@@ -319,22 +305,14 @@ fn do_find2(
                     return,
                   )
                 }
-              Some(_) ->
-                do_find2(
-                  xs,
-                  a_so_far,
-                  b_so_far,
-                  predicate_a,
-                  predicate_b,
-                  return,
-                )
+              Some(_) -> return(list.find(xs, predicate_a), b_so_far)
             }
           }
         Some(_) ->
           if predicate_b(x) {
             return(a_so_far, Some(x))
           } else {
-            do_find2(xs, a_so_far, b_so_far, predicate_a, predicate_b, return)
+            return(a_so_far, list.find(xs, predicate_b))
           }
       }
   }
@@ -1078,4 +1056,52 @@ pub fn find6(
     predicate_f,
     return,
   )
+}
+
+fn do_at2(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  index_a: Int,
+  index_b: Int,
+  return: Scott2<Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far)
+    [x, ..xs] ->
+      when a_so_far is {
+        None ->
+          if index_a == 0 {
+            when b_so_far is {
+              None -> return(a_so_far, list.at(xs, index_b - 1))
+              Some(_) -> return(Some(x), b_so_far)
+            }
+          } else {
+            when b_so_far is {
+              None ->
+                if index_b == 0 {
+                  return(list.at(xs, index_a - 1), Some(x))
+                } else {
+                  do_at2(xs, a_so_far, b_so_far, index_a - 1, index_b - 1, return)
+                }
+              Some(_) -> return(list.at(xs, index_a - 1), b_so_far)
+            }
+          }
+        Some(_) ->
+          if index_b == 0 {
+            return(a_so_far, Some(x))
+          } else {
+            return(a_so_far, list.at(xs, index_b - 1))
+          }
+      }
+  }
+}
+
+pub fn at2(
+  self: List<x>,
+  index_a: Int,
+  index_b: Int,
+  return: Scott2<Option<x>, Option<x>, result>,
+) -> result {
+  do_at2(self, None, None, index_a, index_b, return)
 }
