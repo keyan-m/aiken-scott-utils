@@ -524,3 +524,259 @@ test find6_unordered_2() {
     Some(6) == m_f,
   }
 }
+
+const list_for_at_tests = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
+test at2_ordered() {
+  let m_a, m_b <- scott_list.at2(list_for_at_tests, 0, 14)
+  and {
+    Some(0) == m_a,
+    Some(14) == m_b,
+  }
+}
+
+test at2_unordered() {
+  let m_a, m_b <- scott_list.at2(list_for_at_tests, 14, 0)
+  and {
+    Some(14) == m_a,
+    Some(0) == m_b,
+  }
+}
+
+test at2_most_cost() {
+  let m_a, m_b <- scott_list.at2(list_for_at_tests, 14, 13)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+  }
+}
+
+test at2_most_cost_no_scott() {
+  let m_a = list.at(list_for_at_tests, 13)
+  let m_b = list.at(list_for_at_tests, 14)
+  and {
+    Some(13) == m_a,
+    Some(14) == m_b,
+  }
+}
+
+test at3_ordered() {
+  let m_a, m_b, m_c <- scott_list.at3(list_for_at_tests, 0, 1, 14)
+  and {
+    Some(0) == m_a,
+    Some(1) == m_b,
+    Some(14) == m_c,
+  }
+}
+
+test at3_unordered() {
+  let m_a, m_b, m_c <- scott_list.at3(list_for_at_tests, 14, 1, 0)
+  and {
+    Some(14) == m_a,
+    Some(1) == m_b,
+    Some(0) == m_c,
+  }
+}
+
+test at3_most_cost() {
+  let m_a, m_b, m_c <- scott_list.at3(list_for_at_tests, 14, 13, 12)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+    Some(12) == m_c,
+  }
+}
+
+test at3_most_cost_no_scott() {
+  let m_a = list.at(list_for_at_tests, 12)
+  let m_b = list.at(list_for_at_tests, 13)
+  let m_c = list.at(list_for_at_tests, 14)
+  and {
+    Some(12) == m_a,
+    Some(13) == m_b,
+    Some(14) == m_c,
+  }
+}
+
+test at4_ordered() {
+  let m_a, m_b, m_c, m_d <- scott_list.at4(list_for_at_tests, 0, 1, 13, 14)
+  and {
+    Some(0) == m_a,
+    Some(1) == m_b,
+    Some(13) == m_c,
+    Some(14) == m_d,
+  }
+}
+
+test at4_unordered() {
+  let m_a, m_b, m_c, m_d <- scott_list.at4(list_for_at_tests, 14, 13, 1, 0)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+    Some(1) == m_c,
+    Some(0) == m_d,
+  }
+}
+
+test at4_most_cost() {
+  let m_a, m_b, m_c, m_d <- scott_list.at4(list_for_at_tests, 14, 13, 12, 11)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+    Some(12) == m_c,
+    Some(11) == m_d,
+  }
+}
+
+test at4_most_cost_no_scott() {
+  let m_a = list.at(list_for_at_tests, 11)
+  let m_b = list.at(list_for_at_tests, 12)
+  let m_c = list.at(list_for_at_tests, 13)
+  let m_d = list.at(list_for_at_tests, 14)
+  and {
+    Some(11) == m_a,
+    Some(12) == m_b,
+    Some(13) == m_c,
+    Some(14) == m_d,
+  }
+}
+
+test at5_ordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+    m_e,
+  <- scott_list.at5(list_for_at_tests, 0, 1, 7, 13, 14)
+  and {
+    Some(0) == m_a,
+    Some(1) == m_b,
+    Some(7) == m_c,
+    Some(13) == m_d,
+    Some(14) == m_e,
+  }
+}
+
+test at5_unordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+    m_e,
+  <- scott_list.at5(list_for_at_tests, 14, 13, 7, 1, 0)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+    Some(7) == m_c,
+    Some(1) == m_d,
+    Some(0) == m_e,
+  }
+}
+
+test at5_most_cost() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+    m_e,
+  <- scott_list.at5(list_for_at_tests, 14, 13, 12, 11, 10)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+    Some(12) == m_c,
+    Some(11) == m_d,
+    Some(10) == m_e,
+  }
+}
+
+test at5_most_cost_no_scott() {
+  let m_a = list.at(list_for_at_tests, 10)
+  let m_b = list.at(list_for_at_tests, 11)
+  let m_c = list.at(list_for_at_tests, 12)
+  let m_d = list.at(list_for_at_tests, 13)
+  let m_e = list.at(list_for_at_tests, 14)
+  and {
+    Some(10) == m_a,
+    Some(11) == m_b,
+    Some(12) == m_c,
+    Some(13) == m_d,
+    Some(14) == m_e,
+  }
+}
+
+test at6_ordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+    m_e,
+    m_f,
+  <- scott_list.at6(list_for_at_tests, 0, 1, 2, 12, 13, 14)
+  and {
+    Some(0) == m_a,
+    Some(1) == m_b,
+    Some(2) == m_c,
+    Some(12) == m_d,
+    Some(13) == m_e,
+    Some(14) == m_f,
+  }
+}
+
+test at6_unordered() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+    m_e,
+    m_f,
+  <- scott_list.at6(list_for_at_tests, 14, 0, 13, 1, 12, 2)
+  and {
+    Some(14) == m_a,
+    Some(0) == m_b,
+    Some(13) == m_c,
+    Some(1) == m_d,
+    Some(12) == m_e,
+    Some(2) == m_f,
+  }
+}
+
+test at6_most_cost() {
+  let
+    m_a,
+    m_b,
+    m_c,
+    m_d,
+    m_e,
+    m_f,
+  <- scott_list.at6(list_for_at_tests, 14, 13, 12, 11, 10, 9)
+  and {
+    Some(14) == m_a,
+    Some(13) == m_b,
+    Some(12) == m_c,
+    Some(11) == m_d,
+    Some(10) == m_e,
+    Some(9) == m_f,
+  }
+}
+
+test at6_most_cost_no_scott() {
+  let m_a = list.at(list_for_at_tests, 9)
+  let m_b = list.at(list_for_at_tests, 10)
+  let m_c = list.at(list_for_at_tests, 11)
+  let m_d = list.at(list_for_at_tests, 12)
+  let m_e = list.at(list_for_at_tests, 13)
+  let m_f = list.at(list_for_at_tests, 14)
+  and {
+    Some(9) == m_a,
+    Some(10) == m_b,
+    Some(11) == m_c,
+    Some(12) == m_d,
+    Some(13) == m_e,
+    Some(14) == m_f,
+  }
+}
