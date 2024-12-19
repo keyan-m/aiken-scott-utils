@@ -40,6 +40,7 @@
 //// }
 //// ```
 
+use aiken/collection/list
 use aiken_scott_utils/common.{Scott2, Scott3, Scott4, Scott5, Scott6}
 
 // --- FOLDS -------------------------------------------------------------------
@@ -286,29 +287,14 @@ fn do_find2(
         None ->
           if predicate_a(x) {
             when b_so_far is {
-              None ->
-                do_find2(
-                  xs,
-                  Some(x),
-                  b_so_far,
-                  predicate_a,
-                  predicate_b,
-                  return,
-                )
+              None -> return(Some(x), list.find(xs, predicate_b))
               Some(_) -> return(Some(x), b_so_far)
             }
           } else {
             when b_so_far is {
               None ->
                 if predicate_b(x) {
-                  do_find2(
-                    xs,
-                    a_so_far,
-                    Some(x),
-                    predicate_a,
-                    predicate_b,
-                    return,
-                  )
+                  return(list.find(xs, predicate_a), Some(x))
                 } else {
                   do_find2(
                     xs,
@@ -319,22 +305,14 @@ fn do_find2(
                     return,
                   )
                 }
-              Some(_) ->
-                do_find2(
-                  xs,
-                  a_so_far,
-                  b_so_far,
-                  predicate_a,
-                  predicate_b,
-                  return,
-                )
+              Some(_) -> return(list.find(xs, predicate_a), b_so_far)
             }
           }
         Some(_) ->
           if predicate_b(x) {
             return(a_so_far, Some(x))
           } else {
-            do_find2(xs, a_so_far, b_so_far, predicate_a, predicate_b, return)
+            return(a_so_far, list.find(xs, predicate_b))
           }
       }
   }
@@ -1076,6 +1054,790 @@ pub fn find6(
     predicate_d,
     predicate_e,
     predicate_f,
+    return,
+  )
+}
+
+// --- ATS ---------------------------------------------------------------------
+
+fn do_at2(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  index_a: Int,
+  index_b: Int,
+  return: Scott2<Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far)
+    [x, ..xs] ->
+      when a_so_far is {
+        None ->
+          if index_a == 0 {
+            when b_so_far is {
+              None -> return(Some(x), list.at(xs, index_b - 1))
+              Some(_) -> return(Some(x), b_so_far)
+            }
+          } else {
+            when b_so_far is {
+              None ->
+                if index_b == 0 {
+                  return(list.at(xs, index_a - 1), Some(x))
+                } else {
+                  do_at2(
+                    xs,
+                    a_so_far,
+                    b_so_far,
+                    index_a - 1,
+                    index_b - 1,
+                    return,
+                  )
+                }
+              Some(_) -> return(list.at(xs, index_a - 1), b_so_far)
+            }
+          }
+        Some(_) ->
+          if index_b == 0 {
+            return(a_so_far, Some(x))
+          } else {
+            return(a_so_far, list.at(xs, index_b - 1))
+          }
+      }
+  }
+}
+
+fn do_at3(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  return: Scott3<Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+          <- do_at2(xs, b_so_far, c_so_far, index_b - 1, index_c - 1)
+          return(found_a, m_b, m_c)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+          <- do_at2(xs, a_so_far, c_so_far, index_a - 1, index_c - 1)
+          return(m_a, found_b, m_c)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+          <- do_at2(xs, a_so_far, b_so_far, index_a - 1, index_b - 1)
+          return(m_a, m_b, found_c)
+        }
+      when a_so_far is {
+        None ->
+          if index_a == 0 {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if index_b == 0 {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if index_c == 0 {
+                        c_found_as(Some(x))
+                      } else {
+                        do_at3(
+                          xs,
+                          a_so_far,
+                          b_so_far,
+                          c_so_far,
+                          index_a - 1,
+                          index_b - 1,
+                          index_c - 1,
+                          return,
+                        )
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
+fn do_at4(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  d_so_far: Option<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  index_d: Int,
+  return: Scott4<Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far, d_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+            m_d,
+          <-
+            do_at3(
+              xs,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              index_b - 1,
+              index_c - 1,
+              index_d - 1,
+            )
+          return(found_a, m_b, m_c, m_d)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+            m_d,
+          <-
+            do_at3(
+              xs,
+              a_so_far,
+              c_so_far,
+              d_so_far,
+              index_a - 1,
+              index_c - 1,
+              index_d - 1,
+            )
+          return(m_a, found_b, m_c, m_d)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+            m_d,
+          <-
+            do_at3(
+              xs,
+              a_so_far,
+              b_so_far,
+              d_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_d - 1,
+            )
+          return(m_a, m_b, found_c, m_d)
+        }
+      let d_found_as =
+        fn(found_d) {
+          let
+            m_a,
+            m_b,
+            m_c,
+          <-
+            do_at3(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_c - 1,
+            )
+          return(m_a, m_b, m_c, found_d)
+        }
+      when a_so_far is {
+        None ->
+          if index_a == 0 {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if index_b == 0 {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if index_c == 0 {
+                        c_found_as(Some(x))
+                      } else {
+                        when d_so_far is {
+                          None ->
+                            if index_d == 0 {
+                              d_found_as(Some(x))
+                            } else {
+                              do_at4(
+                                xs,
+                                a_so_far,
+                                b_so_far,
+                                c_so_far,
+                                d_so_far,
+                                index_a - 1,
+                                index_b - 1,
+                                index_c - 1,
+                                index_d - 1,
+                                return,
+                              )
+                            }
+                          Some(_) -> d_found_as(d_so_far)
+                        }
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
+fn do_at5(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  d_so_far: Option<x>,
+  e_so_far: Option<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  index_d: Int,
+  index_e: Int,
+  return: Scott5<Option<x>, Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+            m_d,
+            m_e,
+          <-
+            do_at4(
+              xs,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              index_b - 1,
+              index_c - 1,
+              index_d - 1,
+              index_e - 1,
+            )
+          return(found_a, m_b, m_c, m_d, m_e)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+            m_d,
+            m_e,
+          <-
+            do_at4(
+              xs,
+              a_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              index_a - 1,
+              index_c - 1,
+              index_d - 1,
+              index_e - 1,
+            )
+          return(m_a, found_b, m_c, m_d, m_e)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+            m_d,
+            m_e,
+          <-
+            do_at4(
+              xs,
+              a_so_far,
+              b_so_far,
+              d_so_far,
+              e_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_d - 1,
+              index_e - 1,
+            )
+          return(m_a, m_b, found_c, m_d, m_e)
+        }
+      let d_found_as =
+        fn(found_d) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_e,
+          <-
+            do_at4(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              e_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_c - 1,
+              index_e - 1,
+            )
+          return(m_a, m_b, m_c, found_d, m_e)
+        }
+      let e_found_as =
+        fn(found_e) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_d,
+          <-
+            do_at4(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_c - 1,
+              index_d - 1,
+            )
+          return(m_a, m_b, m_c, m_d, found_e)
+        }
+      when a_so_far is {
+        None ->
+          if index_a == 0 {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if index_b == 0 {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if index_c == 0 {
+                        c_found_as(Some(x))
+                      } else {
+                        when d_so_far is {
+                          None ->
+                            if index_d == 0 {
+                              d_found_as(Some(x))
+                            } else {
+                              when e_so_far is {
+                                None ->
+                                  if index_e == 0 {
+                                    e_found_as(Some(x))
+                                  } else {
+                                    do_at5(
+                                      xs,
+                                      a_so_far,
+                                      b_so_far,
+                                      c_so_far,
+                                      d_so_far,
+                                      e_so_far,
+                                      index_a - 1,
+                                      index_b - 1,
+                                      index_c - 1,
+                                      index_d - 1,
+                                      index_e - 1,
+                                      return,
+                                    )
+                                  }
+                                Some(_) -> e_found_as(e_so_far)
+                              }
+                            }
+                          Some(_) -> d_found_as(d_so_far)
+                        }
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
+fn do_at6(
+  self: List<x>,
+  a_so_far: Option<x>,
+  b_so_far: Option<x>,
+  c_so_far: Option<x>,
+  d_so_far: Option<x>,
+  e_so_far: Option<x>,
+  f_so_far: Option<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  index_d: Int,
+  index_e: Int,
+  index_f: Int,
+  return: Scott6<
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    result,
+  >,
+) -> result {
+  when self is {
+    [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far, f_so_far)
+    [x, ..xs] -> {
+      let a_found_as =
+        fn(found_a) {
+          let
+            m_b,
+            m_c,
+            m_d,
+            m_e,
+            m_f,
+          <-
+            do_at5(
+              xs,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              f_so_far,
+              index_b - 1,
+              index_c - 1,
+              index_d - 1,
+              index_e - 1,
+              index_f - 1,
+            )
+          return(found_a, m_b, m_c, m_d, m_e, m_f)
+        }
+      let b_found_as =
+        fn(found_b) {
+          let
+            m_a,
+            m_c,
+            m_d,
+            m_e,
+            m_f,
+          <-
+            do_at5(
+              xs,
+              a_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              f_so_far,
+              index_a - 1,
+              index_c - 1,
+              index_d - 1,
+              index_e - 1,
+              index_f - 1,
+            )
+          return(m_a, found_b, m_c, m_d, m_e, m_f)
+        }
+      let c_found_as =
+        fn(found_c) {
+          let
+            m_a,
+            m_b,
+            m_d,
+            m_e,
+            m_f,
+          <-
+            do_at5(
+              xs,
+              a_so_far,
+              b_so_far,
+              d_so_far,
+              e_so_far,
+              f_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_d - 1,
+              index_e - 1,
+              index_f - 1,
+            )
+          return(m_a, m_b, found_c, m_d, m_e, m_f)
+        }
+      let d_found_as =
+        fn(found_d) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_e,
+            m_f,
+          <-
+            do_at5(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              e_so_far,
+              f_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_c - 1,
+              index_e - 1,
+              index_f - 1,
+            )
+          return(m_a, m_b, m_c, found_d, m_e, m_f)
+        }
+      let e_found_as =
+        fn(found_e) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_d,
+            m_f,
+          <-
+            do_at5(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              f_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_c - 1,
+              index_d - 1,
+              index_f - 1,
+            )
+          return(m_a, m_b, m_c, m_d, found_e, m_f)
+        }
+      let f_found_as =
+        fn(found_f) {
+          let
+            m_a,
+            m_b,
+            m_c,
+            m_d,
+            m_e,
+          <-
+            do_at5(
+              xs,
+              a_so_far,
+              b_so_far,
+              c_so_far,
+              d_so_far,
+              e_so_far,
+              index_a - 1,
+              index_b - 1,
+              index_c - 1,
+              index_d - 1,
+              index_e - 1,
+            )
+          return(m_a, m_b, m_c, m_d, m_e, found_f)
+        }
+      when a_so_far is {
+        None ->
+          if index_a == 0 {
+            a_found_as(Some(x))
+          } else {
+            when b_so_far is {
+              None ->
+                if index_b == 0 {
+                  b_found_as(Some(x))
+                } else {
+                  when c_so_far is {
+                    None ->
+                      if index_c == 0 {
+                        c_found_as(Some(x))
+                      } else {
+                        when d_so_far is {
+                          None ->
+                            if index_d == 0 {
+                              d_found_as(Some(x))
+                            } else {
+                              when e_so_far is {
+                                None ->
+                                  if index_e == 0 {
+                                    e_found_as(Some(x))
+                                  } else {
+                                    when f_so_far is {
+                                      None ->
+                                        if index_f == 0 {
+                                          f_found_as(Some(x))
+                                        } else {
+                                          do_at6(
+                                            xs,
+                                            a_so_far,
+                                            b_so_far,
+                                            c_so_far,
+                                            d_so_far,
+                                            e_so_far,
+                                            f_so_far,
+                                            index_a - 1,
+                                            index_b - 1,
+                                            index_c - 1,
+                                            index_d - 1,
+                                            index_e - 1,
+                                            index_f - 1,
+                                            return,
+                                          )
+                                        }
+                                      Some(_) -> f_found_as(f_so_far)
+                                    }
+                                  }
+                                Some(_) -> e_found_as(e_so_far)
+                              }
+                            }
+                          Some(_) -> d_found_as(d_so_far)
+                        }
+                      }
+                    Some(_) -> c_found_as(c_so_far)
+                  }
+                }
+              Some(_) -> b_found_as(b_so_far)
+            }
+          }
+        Some(_) -> a_found_as(a_so_far)
+      }
+    }
+  }
+}
+
+/// Unit tests suggest using `at2` is not very different from using `list.at`
+/// twice.
+pub fn at2(
+  self: List<x>,
+  index_a: Int,
+  index_b: Int,
+  return: Scott2<Option<x>, Option<x>, result>,
+) -> result {
+  do_at2(self, None, None, index_a, index_b, return)
+}
+
+/// Unit tests suggest using `at3` is not very different from using `list.at`
+/// three times.
+pub fn at3(
+  self: List<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  return: Scott3<Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  do_at3(self, None, None, None, index_a, index_b, index_c, return)
+}
+
+/// `at4` and up are more performant than multiple calls to `list.at`.
+pub fn at4(
+  self: List<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  index_d: Int,
+  return: Scott4<Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  do_at4(
+    self,
+    None,
+    None,
+    None,
+    None,
+    index_a,
+    index_b,
+    index_c,
+    index_d,
+    return,
+  )
+}
+
+pub fn at5(
+  self: List<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  index_d: Int,
+  index_e: Int,
+  return: Scott5<Option<x>, Option<x>, Option<x>, Option<x>, Option<x>, result>,
+) -> result {
+  do_at5(
+    self,
+    None,
+    None,
+    None,
+    None,
+    None,
+    index_a,
+    index_b,
+    index_c,
+    index_d,
+    index_e,
+    return,
+  )
+}
+
+pub fn at6(
+  self: List<x>,
+  index_a: Int,
+  index_b: Int,
+  index_c: Int,
+  index_d: Int,
+  index_e: Int,
+  index_f: Int,
+  return: Scott6<
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    Option<x>,
+    result,
+  >,
+) -> result {
+  do_at6(
+    self,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    index_a,
+    index_b,
+    index_c,
+    index_d,
+    index_e,
+    index_f,
     return,
   )
 }
