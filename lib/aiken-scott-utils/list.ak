@@ -41,7 +41,7 @@
 //// ```
 
 use aiken/collection/list
-use aiken_scott_utils/common.{Scott2, Scott3, Scott4, Scott5, Scott6}
+use aiken_scott_utils/types.{Scott2, Scott3, Scott4, Scott5, Scott6}
 
 // --- FOLDS -------------------------------------------------------------------
 
