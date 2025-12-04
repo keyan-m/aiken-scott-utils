@@ -4,38 +4,43 @@
 //// Sample code to see how you can use one of the fold functions with the
 //// backpassing syntax:
 //// ```aiken
+//// use aiken/math.{pow}
 //// use aiken_scott_utils/list as scott_list
 ////
-//// fn avg_of_sums_and_products(xs: List<Int>) -> Int {
+//// fn avg_of_sums_products_powers(xs: List<Int>) -> Int {
 ////   let
 ////     sum,
 ////     product,
+////     power
 ////   <-
-////     scott_list.foldr2(
+////     scott_list.foldr3(
 ////       xs,
 ////       0,
 ////       1,
-////       fn(x, sum_so_far, prod_so_far, return) {
-////         return(sum_so_far + x, prod_so_far * x)
+////       1,
+////       fn(x, sum_so_far, prod_so_far, pow_so_far, return) {
+////         return(sum_so_far + x, prod_so_far * x, pow(pow_so_far, x))
 ////       },
 ////     ) 
-////   (sum + product) / 2
+////   (sum + product + power) / 3
 //// }
 //// ```
 ////
 //// The same code without backpassing syntactic sugar:
 //// ```aiken
+//// use aiken/math.{pow}
 //// use aiken_scott_utils/list as scott_list
 ////
 //// fn avg_of_sums_and_products_desugared(xs: List<Int>) -> Int {
-////   scott_list.foldr2(
+////   scott_list.foldr3(
 ////     xs,
 ////     0,
 ////     1,
-////     fn(x, sum_so_far, prod_so_far, return) {
-////       return(sum_so_far + x, prod_so_far * x)
+////     1,
+////     fn(x, sum_so_far, prod_so_far, pow_so_far, return) {
+////       return(sum_so_far + x, prod_so_far * x, pow(pow_so_far, x))
 ////     },
-////     fn(sum, product) { (sum + product) / 2 }
+////     fn(sum, product, power) { (sum + product + power) / 3 }
 ////   ) 
 //// }
 //// ```
@@ -44,17 +49,6 @@ use aiken/collection/list
 use aiken_scott_utils/types.{Scott2, Scott3, Scott4, Scott5, Scott6}
 
 // --- FOLDS -------------------------------------------------------------------
-
-fn do_foldr2(
-  self: List<x>,
-  with: fn(x, a, b, Scott2<a, b, result>) -> result,
-  return: Scott2<a, b, result>,
-) -> Scott2<a, b, result> {
-  when self is {
-    [] -> return
-    [x, ..xs] -> do_foldr2(xs, with, fn(a, b) { with(x, a, b, return) })
-  }
-}
 
 fn do_foldr3(
   self: List<x>,
@@ -105,32 +99,6 @@ fn do_foldr6(
         fn(a, b, c, d, e, f) { with(x, a, b, c, d, e, f, return) },
       )
   }
-}
-
-pub fn foldl2(
-  self: List<x>,
-  zero_a: a,
-  zero_b: b,
-  with: fn(x, a, b, Scott2<a, b, result>) -> result,
-  return: Scott2<a, b, result>,
-) -> result {
-  when self is {
-    [] -> return(zero_a, zero_b)
-    [x, ..xs] -> {
-      let acc_a, acc_b <- with(x, zero_a, zero_b)
-      foldl2(xs, acc_a, acc_b, with, return)
-    }
-  }
-}
-
-pub fn foldr2(
-  self: List<x>,
-  zero_a: a,
-  zero_b: b,
-  with: fn(x, a, b, Scott2<a, b, result>) -> result,
-  return: Scott2<a, b, result>,
-) -> result {
-  do_foldr2(self, with, return)(zero_a, zero_b)
 }
 
 pub fn foldl3(

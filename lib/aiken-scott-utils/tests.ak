@@ -23,7 +23,7 @@ test foldr2() {
     _,
     acc1,
   <-
-    scott_list.foldr2(
+    list.foldr2(
       fold_elems,
       0,
       1,
@@ -37,7 +37,7 @@ test foldl2() {
     _,
     acc1,
   <-
-    scott_list.foldl2(
+    list.foldl2(
       fold_elems,
       0,
       1,
