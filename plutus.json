@@ -1,0 +1,14 @@
+{
+  "preamble": {
+    "title": "keyan-m/aiken-scott-utils",
+    "description": "A set of utility functions that return multiple values in Scott encoding rather than tuples of 2 or higher",
+    "version": "1.4.0",
+    "plutusVersion": "v3",
+    "compiler": {
+      "name": "Aiken",
+      "version": "v1.1.19+e525483"
+    },
+    "license": "Apache-2.0"
+  },
+  "validators": []
+}

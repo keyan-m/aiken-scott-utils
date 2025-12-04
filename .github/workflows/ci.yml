@@ -28,7 +28,6 @@ jobs:
           version: v1.1.7
       - run: aiken fmt --check
       - run: aiken check -D
-      - run: aiken build
       - run: aiken docs -o docs
       - uses: actions/upload-pages-artifact@v4
         with:
