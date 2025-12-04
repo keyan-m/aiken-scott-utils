@@ -1,5 +1,5 @@
 name = "keyan-m/aiken-scott-utils"
-version = "1.4.0"
+version = "v1.4.0"
 compiler = "v1.1.19"
 plutus = "v3"
 license = "Apache-2.0"
@@ -11,8 +11,8 @@ project = "aiken-scott-utils"
 platform = "github"
 
 [[dependencies]]
-name = "keyan-m/stdlib"
-version = "remove-qualifier"
+name = "aiken-lang/stdlib"
+version = "v3.0.0"
 source = "github"
 
 [config]
