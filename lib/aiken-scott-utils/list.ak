@@ -19,7 +19,7 @@
 ////       1,
 ////       1,
 ////       fn(x, sum_so_far, prod_so_far, pow_so_far, return) {
-////         return(sum_so_far + x, prod_so_far * x, pow(pow_so_far, x))
+////         return(sum_so_far + x, prod_so_far * x, pow(x, pow_so_far))
 ////       },
 ////     ) 
 ////   (sum + product + power) / 3
@@ -38,7 +38,7 @@
 ////     1,
 ////     1,
 ////     fn(x, sum_so_far, prod_so_far, pow_so_far, return) {
-////       return(sum_so_far + x, prod_so_far * x, pow(pow_so_far, x))
+////       return(sum_so_far + x, prod_so_far * x, pow(x, pow_so_far))
 ////     },
 ////     fn(sum, product, power) { (sum + product + power) / 3 }
 ////   ) 
