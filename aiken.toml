@@ -11,8 +11,8 @@ project = "aiken-scott-utils"
 platform = "github"
 
 [[dependencies]]
-name = "aiken-lang/stdlib"
-version = "v3.0.0"
+name = "keyan-m/stdlib"
+version = "remove-qualifier"
 source = "github"
 
 [config]
