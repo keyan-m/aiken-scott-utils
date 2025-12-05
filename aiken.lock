@@ -2,15 +2,14 @@
 # You typically do not need to edit this file
 
 [[requirements]]
-name = "keyan-m/stdlib"
-version = "remove-qualifier"
+name = "aiken-lang/stdlib"
+version = "v3.0.0"
 source = "github"
 
 [[packages]]
-name = "keyan-m/stdlib"
-version = "remove-qualifier"
+name = "aiken-lang/stdlib"
+version = "v3.0.0"
 requirements = []
 source = "github"
 
 [etags]
-"keyan-m/stdlib@remove-qualifier" = [{ secs_since_epoch = 1764865423, nanos_since_epoch = 457678324 }, "2440586c5df7e42075f5b2ec4b66672c53f03187663c0644cf60fb3ff1c4c239"]
