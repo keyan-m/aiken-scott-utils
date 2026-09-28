@@ -172,13 +172,14 @@ pub fn foldl5(
   when self is {
     [] -> return(zero_a, zero_b, zero_c, zero_d, zero_e)
     [x, ..xs] -> {
-      let
-        acc_a,
-        acc_b,
-        acc_c,
-        acc_d,
-        acc_e,
-      <- with(x, zero_a, zero_b, zero_c, zero_d, zero_e)
+      let acc_a, acc_b, acc_c, acc_d, acc_e <- with(
+        x,
+        zero_a,
+        zero_b,
+        zero_c,
+        zero_d,
+        zero_e,
+      )
       foldl5(xs, acc_a, acc_b, acc_c, acc_d, acc_e, with, return)
     }
   }
@@ -211,14 +212,15 @@ pub fn foldl6(
   when self is {
     [] -> return(zero_a, zero_b, zero_c, zero_d, zero_e, zero_f)
     [x, ..xs] -> {
-      let
-        acc_a,
-        acc_b,
-        acc_c,
-        acc_d,
-        acc_e,
-        acc_f,
-      <- with(x, zero_a, zero_b, zero_c, zero_d, zero_e, zero_f)
+      let acc_a, acc_b, acc_c, acc_d, acc_e, acc_f <- with(
+        x,
+        zero_a,
+        zero_b,
+        zero_c,
+        zero_d,
+        zero_e,
+        zero_f,
+      )
       foldl6(xs, acc_a, acc_b, acc_c, acc_d, acc_e, acc_f, with, return)
     }
   }
@@ -299,30 +301,36 @@ fn do_find3(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-          <- do_find2(xs, b_so_far, c_so_far, predicate_b, predicate_c)
-          return(found_a, m_b, m_c)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-          <- do_find2(xs, a_so_far, c_so_far, predicate_a, predicate_c)
-          return(m_a, found_b, m_c)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-          <- do_find2(xs, a_so_far, b_so_far, predicate_a, predicate_b)
-          return(m_a, m_b, found_c)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c <- do_find2(
+          xs,
+          b_so_far,
+          c_so_far,
+          predicate_b,
+          predicate_c,
+        )
+        return(found_a, m_b, m_c)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c <- do_find2(
+          xs,
+          a_so_far,
+          c_so_far,
+          predicate_a,
+          predicate_c,
+        )
+        return(m_a, found_b, m_c)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b <- do_find2(
+          xs,
+          a_so_far,
+          b_so_far,
+          predicate_a,
+          predicate_b,
+        )
+        return(m_a, m_b, found_c)
+      }
       when a_so_far is {
         None ->
           if predicate_a(x) {
@@ -376,78 +384,54 @@ fn do_find4(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far, d_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-            m_d,
-          <-
-            do_find3(
-              xs,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              predicate_b,
-              predicate_c,
-              predicate_d,
-            )
-          return(found_a, m_b, m_c, m_d)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-            m_d,
-          <-
-            do_find3(
-              xs,
-              a_so_far,
-              c_so_far,
-              d_so_far,
-              predicate_a,
-              predicate_c,
-              predicate_d,
-            )
-          return(m_a, found_b, m_c, m_d)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-            m_d,
-          <-
-            do_find3(
-              xs,
-              a_so_far,
-              b_so_far,
-              d_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_d,
-            )
-          return(m_a, m_b, found_c, m_d)
-        }
-      let d_found_as =
-        fn(found_d) {
-          let
-            m_a,
-            m_b,
-            m_c,
-          <-
-            do_find3(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_c,
-            )
-          return(m_a, m_b, m_c, found_d)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c, m_d <- do_find3(
+          xs,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          predicate_b,
+          predicate_c,
+          predicate_d,
+        )
+        return(found_a, m_b, m_c, m_d)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c, m_d <- do_find3(
+          xs,
+          a_so_far,
+          c_so_far,
+          d_so_far,
+          predicate_a,
+          predicate_c,
+          predicate_d,
+        )
+        return(m_a, found_b, m_c, m_d)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b, m_d <- do_find3(
+          xs,
+          a_so_far,
+          b_so_far,
+          d_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_d,
+        )
+        return(m_a, m_b, found_c, m_d)
+      }
+      let d_found_as = fn(found_d) {
+        let m_a, m_b, m_c <- do_find3(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_c,
+        )
+        return(m_a, m_b, m_c, found_d)
+      }
       when a_so_far is {
         None ->
           if predicate_a(x) {
@@ -513,111 +497,76 @@ fn do_find5(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-            m_d,
-            m_e,
-          <-
-            do_find4(
-              xs,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              predicate_b,
-              predicate_c,
-              predicate_d,
-              predicate_e,
-            )
-          return(found_a, m_b, m_c, m_d, m_e)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-            m_d,
-            m_e,
-          <-
-            do_find4(
-              xs,
-              a_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              predicate_a,
-              predicate_c,
-              predicate_d,
-              predicate_e,
-            )
-          return(m_a, found_b, m_c, m_d, m_e)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-            m_d,
-            m_e,
-          <-
-            do_find4(
-              xs,
-              a_so_far,
-              b_so_far,
-              d_so_far,
-              e_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_d,
-              predicate_e,
-            )
-          return(m_a, m_b, found_c, m_d, m_e)
-        }
-      let d_found_as =
-        fn(found_d) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_e,
-          <-
-            do_find4(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              e_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_c,
-              predicate_e,
-            )
-          return(m_a, m_b, m_c, found_d, m_e)
-        }
-      let e_found_as =
-        fn(found_e) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_d,
-          <-
-            do_find4(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_c,
-              predicate_d,
-            )
-          return(m_a, m_b, m_c, m_d, found_e)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c, m_d, m_e <- do_find4(
+          xs,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          predicate_b,
+          predicate_c,
+          predicate_d,
+          predicate_e,
+        )
+        return(found_a, m_b, m_c, m_d, m_e)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c, m_d, m_e <- do_find4(
+          xs,
+          a_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          predicate_a,
+          predicate_c,
+          predicate_d,
+          predicate_e,
+        )
+        return(m_a, found_b, m_c, m_d, m_e)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b, m_d, m_e <- do_find4(
+          xs,
+          a_so_far,
+          b_so_far,
+          d_so_far,
+          e_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_d,
+          predicate_e,
+        )
+        return(m_a, m_b, found_c, m_d, m_e)
+      }
+      let d_found_as = fn(found_d) {
+        let m_a, m_b, m_c, m_e <- do_find4(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          e_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_c,
+          predicate_e,
+        )
+        return(m_a, m_b, m_c, found_d, m_e)
+      }
+      let e_found_as = fn(found_e) {
+        let m_a, m_b, m_c, m_d <- do_find4(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_c,
+          predicate_d,
+        )
+        return(m_a, m_b, m_c, m_d, found_e)
+      }
       when a_so_far is {
         None ->
           if predicate_a(x) {
@@ -703,150 +652,102 @@ fn do_find6(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far, f_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-            m_d,
-            m_e,
-            m_f,
-          <-
-            do_find5(
-              xs,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              f_so_far,
-              predicate_b,
-              predicate_c,
-              predicate_d,
-              predicate_e,
-              predicate_f,
-            )
-          return(found_a, m_b, m_c, m_d, m_e, m_f)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-            m_d,
-            m_e,
-            m_f,
-          <-
-            do_find5(
-              xs,
-              a_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              f_so_far,
-              predicate_a,
-              predicate_c,
-              predicate_d,
-              predicate_e,
-              predicate_f,
-            )
-          return(m_a, found_b, m_c, m_d, m_e, m_f)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-            m_d,
-            m_e,
-            m_f,
-          <-
-            do_find5(
-              xs,
-              a_so_far,
-              b_so_far,
-              d_so_far,
-              e_so_far,
-              f_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_d,
-              predicate_e,
-              predicate_f,
-            )
-          return(m_a, m_b, found_c, m_d, m_e, m_f)
-        }
-      let d_found_as =
-        fn(found_d) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_e,
-            m_f,
-          <-
-            do_find5(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              e_so_far,
-              f_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_c,
-              predicate_e,
-              predicate_f,
-            )
-          return(m_a, m_b, m_c, found_d, m_e, m_f)
-        }
-      let e_found_as =
-        fn(found_e) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_d,
-            m_f,
-          <-
-            do_find5(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              f_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_c,
-              predicate_d,
-              predicate_f,
-            )
-          return(m_a, m_b, m_c, m_d, found_e, m_f)
-        }
-      let f_found_as =
-        fn(found_f) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_d,
-            m_e,
-          <-
-            do_find5(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              predicate_a,
-              predicate_b,
-              predicate_c,
-              predicate_d,
-              predicate_e,
-            )
-          return(m_a, m_b, m_c, m_d, m_e, found_f)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c, m_d, m_e, m_f <- do_find5(
+          xs,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          f_so_far,
+          predicate_b,
+          predicate_c,
+          predicate_d,
+          predicate_e,
+          predicate_f,
+        )
+        return(found_a, m_b, m_c, m_d, m_e, m_f)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c, m_d, m_e, m_f <- do_find5(
+          xs,
+          a_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          f_so_far,
+          predicate_a,
+          predicate_c,
+          predicate_d,
+          predicate_e,
+          predicate_f,
+        )
+        return(m_a, found_b, m_c, m_d, m_e, m_f)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b, m_d, m_e, m_f <- do_find5(
+          xs,
+          a_so_far,
+          b_so_far,
+          d_so_far,
+          e_so_far,
+          f_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_d,
+          predicate_e,
+          predicate_f,
+        )
+        return(m_a, m_b, found_c, m_d, m_e, m_f)
+      }
+      let d_found_as = fn(found_d) {
+        let m_a, m_b, m_c, m_e, m_f <- do_find5(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          e_so_far,
+          f_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_c,
+          predicate_e,
+          predicate_f,
+        )
+        return(m_a, m_b, m_c, found_d, m_e, m_f)
+      }
+      let e_found_as = fn(found_e) {
+        let m_a, m_b, m_c, m_d, m_f <- do_find5(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          f_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_c,
+          predicate_d,
+          predicate_f,
+        )
+        return(m_a, m_b, m_c, m_d, found_e, m_f)
+      }
+      let f_found_as = fn(found_f) {
+        let m_a, m_b, m_c, m_d, m_e <- do_find5(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          predicate_a,
+          predicate_b,
+          predicate_c,
+          predicate_d,
+          predicate_e,
+        )
+        return(m_a, m_b, m_c, m_d, m_e, found_f)
+      }
       when a_so_far is {
         None ->
           if predicate_a(x) {
@@ -1087,30 +988,18 @@ fn do_at3(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-          <- do_at2(xs, b_so_far, c_so_far, index_b - 1, index_c - 1)
-          return(found_a, m_b, m_c)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-          <- do_at2(xs, a_so_far, c_so_far, index_a - 1, index_c - 1)
-          return(m_a, found_b, m_c)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-          <- do_at2(xs, a_so_far, b_so_far, index_a - 1, index_b - 1)
-          return(m_a, m_b, found_c)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c <- do_at2(xs, b_so_far, c_so_far, index_b - 1, index_c - 1)
+        return(found_a, m_b, m_c)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c <- do_at2(xs, a_so_far, c_so_far, index_a - 1, index_c - 1)
+        return(m_a, found_b, m_c)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b <- do_at2(xs, a_so_far, b_so_far, index_a - 1, index_b - 1)
+        return(m_a, m_b, found_c)
+      }
       when a_so_far is {
         None ->
           if index_a == 0 {
@@ -1164,78 +1053,54 @@ fn do_at4(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far, d_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-            m_d,
-          <-
-            do_at3(
-              xs,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              index_b - 1,
-              index_c - 1,
-              index_d - 1,
-            )
-          return(found_a, m_b, m_c, m_d)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-            m_d,
-          <-
-            do_at3(
-              xs,
-              a_so_far,
-              c_so_far,
-              d_so_far,
-              index_a - 1,
-              index_c - 1,
-              index_d - 1,
-            )
-          return(m_a, found_b, m_c, m_d)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-            m_d,
-          <-
-            do_at3(
-              xs,
-              a_so_far,
-              b_so_far,
-              d_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_d - 1,
-            )
-          return(m_a, m_b, found_c, m_d)
-        }
-      let d_found_as =
-        fn(found_d) {
-          let
-            m_a,
-            m_b,
-            m_c,
-          <-
-            do_at3(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_c - 1,
-            )
-          return(m_a, m_b, m_c, found_d)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c, m_d <- do_at3(
+          xs,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          index_b - 1,
+          index_c - 1,
+          index_d - 1,
+        )
+        return(found_a, m_b, m_c, m_d)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c, m_d <- do_at3(
+          xs,
+          a_so_far,
+          c_so_far,
+          d_so_far,
+          index_a - 1,
+          index_c - 1,
+          index_d - 1,
+        )
+        return(m_a, found_b, m_c, m_d)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b, m_d <- do_at3(
+          xs,
+          a_so_far,
+          b_so_far,
+          d_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_d - 1,
+        )
+        return(m_a, m_b, found_c, m_d)
+      }
+      let d_found_as = fn(found_d) {
+        let m_a, m_b, m_c <- do_at3(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_c - 1,
+        )
+        return(m_a, m_b, m_c, found_d)
+      }
       when a_so_far is {
         None ->
           if index_a == 0 {
@@ -1301,111 +1166,76 @@ fn do_at5(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-            m_d,
-            m_e,
-          <-
-            do_at4(
-              xs,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              index_b - 1,
-              index_c - 1,
-              index_d - 1,
-              index_e - 1,
-            )
-          return(found_a, m_b, m_c, m_d, m_e)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-            m_d,
-            m_e,
-          <-
-            do_at4(
-              xs,
-              a_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              index_a - 1,
-              index_c - 1,
-              index_d - 1,
-              index_e - 1,
-            )
-          return(m_a, found_b, m_c, m_d, m_e)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-            m_d,
-            m_e,
-          <-
-            do_at4(
-              xs,
-              a_so_far,
-              b_so_far,
-              d_so_far,
-              e_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_d - 1,
-              index_e - 1,
-            )
-          return(m_a, m_b, found_c, m_d, m_e)
-        }
-      let d_found_as =
-        fn(found_d) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_e,
-          <-
-            do_at4(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              e_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_c - 1,
-              index_e - 1,
-            )
-          return(m_a, m_b, m_c, found_d, m_e)
-        }
-      let e_found_as =
-        fn(found_e) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_d,
-          <-
-            do_at4(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_c - 1,
-              index_d - 1,
-            )
-          return(m_a, m_b, m_c, m_d, found_e)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c, m_d, m_e <- do_at4(
+          xs,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          index_b - 1,
+          index_c - 1,
+          index_d - 1,
+          index_e - 1,
+        )
+        return(found_a, m_b, m_c, m_d, m_e)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c, m_d, m_e <- do_at4(
+          xs,
+          a_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          index_a - 1,
+          index_c - 1,
+          index_d - 1,
+          index_e - 1,
+        )
+        return(m_a, found_b, m_c, m_d, m_e)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b, m_d, m_e <- do_at4(
+          xs,
+          a_so_far,
+          b_so_far,
+          d_so_far,
+          e_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_d - 1,
+          index_e - 1,
+        )
+        return(m_a, m_b, found_c, m_d, m_e)
+      }
+      let d_found_as = fn(found_d) {
+        let m_a, m_b, m_c, m_e <- do_at4(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          e_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_c - 1,
+          index_e - 1,
+        )
+        return(m_a, m_b, m_c, found_d, m_e)
+      }
+      let e_found_as = fn(found_e) {
+        let m_a, m_b, m_c, m_d <- do_at4(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_c - 1,
+          index_d - 1,
+        )
+        return(m_a, m_b, m_c, m_d, found_e)
+      }
       when a_so_far is {
         None ->
           if index_a == 0 {
@@ -1491,150 +1321,102 @@ fn do_at6(
   when self is {
     [] -> return(a_so_far, b_so_far, c_so_far, d_so_far, e_so_far, f_so_far)
     [x, ..xs] -> {
-      let a_found_as =
-        fn(found_a) {
-          let
-            m_b,
-            m_c,
-            m_d,
-            m_e,
-            m_f,
-          <-
-            do_at5(
-              xs,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              f_so_far,
-              index_b - 1,
-              index_c - 1,
-              index_d - 1,
-              index_e - 1,
-              index_f - 1,
-            )
-          return(found_a, m_b, m_c, m_d, m_e, m_f)
-        }
-      let b_found_as =
-        fn(found_b) {
-          let
-            m_a,
-            m_c,
-            m_d,
-            m_e,
-            m_f,
-          <-
-            do_at5(
-              xs,
-              a_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              f_so_far,
-              index_a - 1,
-              index_c - 1,
-              index_d - 1,
-              index_e - 1,
-              index_f - 1,
-            )
-          return(m_a, found_b, m_c, m_d, m_e, m_f)
-        }
-      let c_found_as =
-        fn(found_c) {
-          let
-            m_a,
-            m_b,
-            m_d,
-            m_e,
-            m_f,
-          <-
-            do_at5(
-              xs,
-              a_so_far,
-              b_so_far,
-              d_so_far,
-              e_so_far,
-              f_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_d - 1,
-              index_e - 1,
-              index_f - 1,
-            )
-          return(m_a, m_b, found_c, m_d, m_e, m_f)
-        }
-      let d_found_as =
-        fn(found_d) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_e,
-            m_f,
-          <-
-            do_at5(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              e_so_far,
-              f_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_c - 1,
-              index_e - 1,
-              index_f - 1,
-            )
-          return(m_a, m_b, m_c, found_d, m_e, m_f)
-        }
-      let e_found_as =
-        fn(found_e) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_d,
-            m_f,
-          <-
-            do_at5(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              f_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_c - 1,
-              index_d - 1,
-              index_f - 1,
-            )
-          return(m_a, m_b, m_c, m_d, found_e, m_f)
-        }
-      let f_found_as =
-        fn(found_f) {
-          let
-            m_a,
-            m_b,
-            m_c,
-            m_d,
-            m_e,
-          <-
-            do_at5(
-              xs,
-              a_so_far,
-              b_so_far,
-              c_so_far,
-              d_so_far,
-              e_so_far,
-              index_a - 1,
-              index_b - 1,
-              index_c - 1,
-              index_d - 1,
-              index_e - 1,
-            )
-          return(m_a, m_b, m_c, m_d, m_e, found_f)
-        }
+      let a_found_as = fn(found_a) {
+        let m_b, m_c, m_d, m_e, m_f <- do_at5(
+          xs,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          f_so_far,
+          index_b - 1,
+          index_c - 1,
+          index_d - 1,
+          index_e - 1,
+          index_f - 1,
+        )
+        return(found_a, m_b, m_c, m_d, m_e, m_f)
+      }
+      let b_found_as = fn(found_b) {
+        let m_a, m_c, m_d, m_e, m_f <- do_at5(
+          xs,
+          a_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          f_so_far,
+          index_a - 1,
+          index_c - 1,
+          index_d - 1,
+          index_e - 1,
+          index_f - 1,
+        )
+        return(m_a, found_b, m_c, m_d, m_e, m_f)
+      }
+      let c_found_as = fn(found_c) {
+        let m_a, m_b, m_d, m_e, m_f <- do_at5(
+          xs,
+          a_so_far,
+          b_so_far,
+          d_so_far,
+          e_so_far,
+          f_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_d - 1,
+          index_e - 1,
+          index_f - 1,
+        )
+        return(m_a, m_b, found_c, m_d, m_e, m_f)
+      }
+      let d_found_as = fn(found_d) {
+        let m_a, m_b, m_c, m_e, m_f <- do_at5(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          e_so_far,
+          f_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_c - 1,
+          index_e - 1,
+          index_f - 1,
+        )
+        return(m_a, m_b, m_c, found_d, m_e, m_f)
+      }
+      let e_found_as = fn(found_e) {
+        let m_a, m_b, m_c, m_d, m_f <- do_at5(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          f_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_c - 1,
+          index_d - 1,
+          index_f - 1,
+        )
+        return(m_a, m_b, m_c, m_d, found_e, m_f)
+      }
+      let f_found_as = fn(found_f) {
+        let m_a, m_b, m_c, m_d, m_e <- do_at5(
+          xs,
+          a_so_far,
+          b_so_far,
+          c_so_far,
+          d_so_far,
+          e_so_far,
+          index_a - 1,
+          index_b - 1,
+          index_c - 1,
+          index_d - 1,
+          index_e - 1,
+        )
+        return(m_a, m_b, m_c, m_d, m_e, found_f)
+      }
       when a_so_far is {
         None ->
           if index_a == 0 {
